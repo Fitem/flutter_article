@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_article/config.dart';
-import 'package:flutter_article/scan_draw/scan.dart';
+import 'package:flutter_article/diagonal_chess/diagonal_chess.dart';
 
 void main() {
-  // 确定初始化
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -19,9 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ScanPage(),
+      home: const DiagonalChessPage(),
     );
   }
 }
-
-
