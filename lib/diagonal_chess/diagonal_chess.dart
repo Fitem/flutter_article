@@ -96,7 +96,7 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
 
   /// 重置游戏
   void resetGame() {
-    // 棋子
+    // 定义棋子位置、颜色、文案
     piecesOffsetList.clear();
     piecesOffsetList
         .add(PiecesBean(boardOffsetList[0], Colors.greenAccent, "3"));
@@ -283,14 +283,16 @@ class DiagonalChessPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant DiagonalChessPainter oldDelegate) {
-    // return oldDelegate.repaint != repaint;
-    return true;
+    return oldDelegate.repaint != repaint;
+    // return true;
   }
 
   /// 绘制棋盘
   void _drawChessboard(Canvas canvas) {
+    // 绘制矩形
     canvas.drawRect(
         Rect.fromLTRB(-rWidth, -rHeight, rWidth, rHeight), _chessboardPaint);
+    // 绘制对角线
     Path path = Path()
       // P1-P9
       ..moveTo(boardOffsetList[0].dx, boardOffsetList[0].dy)
