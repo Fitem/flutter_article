@@ -260,6 +260,7 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
     );
   }
 
+  /// 另一方是否无法走下一步
   bool isOtherNotMoveVisible(List<int> list1, List<int> list2) {
     List<int> list = [...list1, ...list2];
     for (var index in list2) {
