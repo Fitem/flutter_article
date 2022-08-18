@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -18,7 +19,11 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
   double height = 0;
   double rWidth = 0;
   double rHeight = 0;
+
+  // 选择棋子序号
   ValueNotifier<int> piecesIndex = ValueNotifier<int>(-1);
+
+  // 点击棋盘位置
   ValueNotifier<int> boardIndex = ValueNotifier<int>(-1);
 
   // 棋盘各个点可移动位置
@@ -35,12 +40,14 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
   ];
 
   // 胜利的位置
-  final winPositions = [
+  final winIndexMap = [
     [0, 4, 8],
     [2, 4, 6]
   ];
   final List<Offset> boardOffsetList = [];
   final List<PiecesBean> piecesOffsetList = [];
+
+  // 定义步数，判断那一方走下一步棋
   int step = 0;
 
   @override
@@ -98,15 +105,19 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
   void resetGame() {
     // 定义棋子位置、颜色、文案
     piecesOffsetList.clear();
+    // 对手棋子倒序显示
     piecesOffsetList
-        .add(PiecesBean(boardOffsetList[0], Colors.greenAccent, "3"));
+        .add(PiecesBean(boardOffsetList[0], Colors.greenAccent, "3", 0));
     piecesOffsetList
-        .add(PiecesBean(boardOffsetList[1], Colors.greenAccent, "2"));
+        .add(PiecesBean(boardOffsetList[1], Colors.greenAccent, "2", 1));
     piecesOffsetList
-        .add(PiecesBean(boardOffsetList[2], Colors.greenAccent, "1"));
-    piecesOffsetList.add(PiecesBean(boardOffsetList[6], Colors.redAccent, "1"));
-    piecesOffsetList.add(PiecesBean(boardOffsetList[7], Colors.redAccent, "2"));
-    piecesOffsetList.add(PiecesBean(boardOffsetList[8], Colors.redAccent, "3"));
+        .add(PiecesBean(boardOffsetList[2], Colors.greenAccent, "1", 2));
+    piecesOffsetList
+        .add(PiecesBean(boardOffsetList[6], Colors.redAccent, "1", 6));
+    piecesOffsetList
+        .add(PiecesBean(boardOffsetList[7], Colors.redAccent, "2", 7));
+    piecesOffsetList
+        .add(PiecesBean(boardOffsetList[8], Colors.redAccent, "3", 8));
     step = 0;
     piecesIndex.value = -1;
     boardIndex.value = -1;
@@ -135,12 +146,14 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
       var offset = entry.value;
       var index = entry.key;
       if (_checkPoint(offset.dx, offset.dy, dx, dy)) {
+        // 判断棋子是否可以走到该位置
         if (piecesIndex.value > -1 &&
             isMoveViable(piecesIndex.value, index) &&
             (step % 2 == 1 && piecesIndex.value < 3 ||
                 step % 2 == 0 && piecesIndex.value >= 3)) {
           var bean = piecesOffsetList[piecesIndex.value];
           bean.offset = boardOffsetList[index];
+          bean.boardIndex = index;
           boardIndex.value = index;
           step++;
           // 判断当前是否有一边胜利
@@ -166,10 +179,20 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
   /// 获取胜利的状态
   int getWinState() {
     for (int i = 0; i < piecesOffsetList.length / 3; i++) {
-      var offset1 = piecesOffsetList[i * 3 + 1].offset;
-      var offset2 = piecesOffsetList[i * 3 + 1].offset;
-      var offset3 = piecesOffsetList[i * 3 + 2].offset;
-      if (isWinPosition(offset1, offset2, offset3)) {
+      var index1 = piecesOffsetList[i * 3 + 0].boardIndex;
+      var index2 = piecesOffsetList[i * 3 + 1].boardIndex;
+      var index3 = piecesOffsetList[i * 3 + 2].boardIndex;
+      var lastIndex = piecesOffsetList.length - 1;
+      var otherIndex1 = piecesOffsetList[lastIndex - (i * 3 + 0)].boardIndex;
+      var otherIndex2 = piecesOffsetList[lastIndex - (i * 3 + 1)].boardIndex;
+      var otherIndex3 = piecesOffsetList[lastIndex - (i * 3 + 2)].boardIndex;
+      // 判断一方是否已胜利
+      if (isWinPosition(index1, index2, index3)) {
+        return i;
+      }
+      // 判断另外一方是否已无法走棋
+      if (isOtherNotMoveVisible(
+          [index1, index2, index3], [otherIndex1, otherIndex2, otherIndex3])) {
         return i;
       }
     }
@@ -177,14 +200,11 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
   }
 
   /// 是否是符合胜利的位置
-  bool isWinPosition(Offset offset1, Offset offset2, Offset offset3) {
-    var position1 = boardOffsetList.indexOf(offset1);
-    var position2 = boardOffsetList.indexOf(offset2);
-    var position3 = boardOffsetList.indexOf(offset3);
-    for (var positionList in winPositions) {
-      if (positionList.contains(position1) &&
-          positionList.contains(position2) &&
-          positionList.contains(position3)) {
+  bool isWinPosition(int index1, int index2, int index3) {
+    for (var indexList in winIndexMap) {
+      if (indexList.contains(index1) &&
+          indexList.contains(index2) &&
+          indexList.contains(index3)) {
         return true;
       }
     }
@@ -238,6 +258,18 @@ class _DiagonalChessPageState extends State<DiagonalChessPage> {
             });
       },
     );
+  }
+
+  bool isOtherNotMoveVisible(List<int> list1, List<int> list2) {
+    List<int> list = [...list1, ...list2];
+    for (var index in list2) {
+      for (var moveIndex in moveVisibleList[index]) {
+        if (!list.contains(moveIndex)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }
 
@@ -329,6 +361,7 @@ class DiagonalChessPainter extends CustomPainter {
     double radius = isSelected ? 30 : 25;
     canvas.save();
     canvas.translate(offset.dx, offset.dy);
+    // 对手棋子旋转180度，文案倒序显示
     if (reverse) canvas.rotate(pi);
     canvas.drawCircle(Offset.zero, radius, _chessPiecesPaint..color = color);
     _drawChessPieceText(canvas, bean, isSelected);
