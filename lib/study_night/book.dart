@@ -75,7 +75,8 @@ class _BookPageState<BookPage> extends State {
       shaderCallback: _buildShader,
       child: ValueListenableBuilder(
           valueListenable: isTouchSwitch,
-          builder: (context, bool isTouch, _) => SingleChildScrollView(
+          builder: (context, bool isTouch, _) =>
+              SingleChildScrollView(
                 physics: isTouch
                     ? const NeverScrollableScrollPhysics()
                     : const AlwaysScrollableScrollPhysics(),
@@ -111,36 +112,22 @@ class _BookPageState<BookPage> extends State {
       ignoring: true,
       child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-        var width = constraints.maxWidth;
-        var height = constraints.maxHeight;
-        initOffset = Offset(width * 0.8, 300);
-        switchOffset.value = initOffset;
-        return CustomPaint(
-          size: Size(width, height),
-          painter: SwitchPainter(
-              switchOffset: switchOffset, isOpen: isOpen, lightImage: _image),
-        );
-      }),
+            var width = constraints.maxWidth;
+            var height = constraints.maxHeight;
+            initOffset = Offset(width * 0.8, 300);
+            switchOffset.value = initOffset;
+            return CustomPaint(
+              size: Size(width, height),
+              painter: SwitchPainter(
+                  switchOffset: switchOffset, //开关移动位置
+                  isOpen: isOpen, //是否开灯
+                  lightImage: _image),
+            );
+          }),
     );
-    // return GestureDetector(
-    //   onPanStart: _onPanStart,
-    //   onPanEnd: _onPanEnd,
-    //   onPanUpdate: _onPanUpdate,
-    //   child: LayoutBuilder(
-    //       builder: (BuildContext context, BoxConstraints constraints) {
-    //     var width = constraints.maxWidth;
-    //     var height = constraints.maxHeight;
-    //     initOffset = Offset(width * 0.8, 300);
-    //     switchOffset.value = initOffset;
-    //     return CustomPaint(
-    //       size: Size(width, height),
-    //       painter: SwitchPainter(
-    //           switchOffset: switchOffset, isOpen: isOpen, lightImage: _image),
-    //     );
-    //   }),
-    // );
   }
 
+  /// 手指点击
   void _onPanStart(PointerDownEvent details) {
     final Offset offset = details.localPosition;
     double dx = offset.dx - switchOffset.value.dx;
@@ -148,16 +135,18 @@ class _BookPageState<BookPage> extends State {
     isTouchSwitch.value = sqrt(dx * dx + dy * dy).abs() < (15 + 10);
   }
 
+  /// 手指抬起
   void _onPanEnd(PointerUpEvent details) {
     final Offset offset = switchOffset.value;
     double dx = offset.dx - initOffset.dx;
     double dy = offset.dy - initOffset.dy;
     isOpen.value =
-        dy > 0 && sqrt(dx * dx + dy * dy) > 50 ? !isOpen.value : isOpen.value;
+    dy > 0 && sqrt(dx * dx + dy * dy) > 50 ? !isOpen.value : isOpen.value;
     isTouchSwitch.value = false;
     switchOffset.value = initOffset;
   }
 
+  /// 手指移动
   void _onPanUpdate(PointerMoveEvent details) {
     if (isTouchSwitch.value) {
       switchOffset.value = details.localPosition;
@@ -174,10 +163,9 @@ class SwitchPainter extends CustomPainter {
   final ValueNotifier<bool> isOpen;
   ui.Image? _image;
 
-  SwitchPainter(
-      {required this.switchOffset,
-      required this.isOpen,
-      required ui.Image? lightImage})
+  SwitchPainter({required this.switchOffset,
+    required this.isOpen,
+    required ui.Image? lightImage})
       : super(repaint: Listenable.merge([switchOffset, isOpen])) {
     _image = lightImage;
     _linePaint = Paint()
@@ -199,7 +187,7 @@ class SwitchPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return false;
   }
 
   void _drawSwitch(Canvas canvas, Size size) {
@@ -213,7 +201,7 @@ class SwitchPainter extends CustomPainter {
   }
 
   void _drawLight(Canvas canvas, Size size) {
-    if (!isOpen.value) return;
+    if (!isOpen.value) return; //若当前开关没有打开，则不显示吊灯
     var width = _image!.width.toDouble();
     canvas.save();
     canvas.translate(size.width * 0.5, 0);
