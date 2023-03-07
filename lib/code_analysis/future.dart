@@ -88,15 +88,15 @@ void futureOnErrorTest() {
     // throw Exception('计算错误1');
   }).then((value) {
     print('2.计算完成count=$_count');
-    throw Exception('计算错误2');
+    // throw Exception('计算错误2');
   }).then((value){
-
+    throw Exception('计算错误2');
   },  onError: (error) {
     print('3.捕获异常 : $error');
     throw Exception('计算错误3');
   }).catchError((error) {
     print('4.捕获异常$error');
-    // throw Exception('计算错误4');
+    throw Exception('计算错误4');
   })
   //     .catchError((error) {
   //   print('5.捕获异常$error');
