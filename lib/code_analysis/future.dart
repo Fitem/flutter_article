@@ -3,23 +3,23 @@ import 'dart:async';
 ///  Name:
 ///  Created by Fitem on 2023/3/6
 void main() {
-  // 最简单的Future
-  // simpleFuture();
+  /// 1.1 Future的基本用法
+  // futureTest1();
 
-  // await、async
-  // asyncAwaitTest();
+  // 1.2 await-async
+  // futureTest2();
 
-  // 延时执行
-  // futureDelayTest();
+  // 1.3 延时执行
+  // futureTest3();
 
-  // Future.then
-  // futureThenTest();
+  // 1.4 Future.then
+  // futureTest4();
 
-  // Future.catchError
-  // futureCatchErrorTest();
+  // 2.1.1 Future.catchError
+  // futureTest5();
 
-  // onError
-  // futureOnErrorTest();
+  // 2.1.2 onError
+  futureTest6();
 
   // Future.whenComplete
   // futureWhenCompleteTest();
@@ -31,15 +31,15 @@ void main() {
   // futureTimeoutTest();
 
   /// Future队列
-  futureQueueTest();
+  // futureQueueTest();
 }
 
-int _count = 0;
-
-void futurePrint() {
+/// 1.1 Future(FutureOr<T> computation())
+void futureTest1() {
+  int _count = 0;
   print('1.开始count=$_count');
   Future(() {
-    for (int i = 0; i < 100000000; i++) {
+    for (int i = 0; i < 10000000; i++) {
       _count++;
     }
     print('2.计算完成count=$_count');
@@ -47,41 +47,43 @@ void futurePrint() {
   print('3.结束count=$_count');
 }
 
-/// 一、最简单的Future
-void simpleFuture() {
-  futurePrint();
-  print('4.做其他事情');
-}
-
-/// async 和 await
-Future<void> asyncAwaitTest() async {
+/// 1.2 async 和 await
+Future<void> futureTest2() async {
+  int _count = 0;
   print('1.开始count=$_count');
   await Future(() {
-    for (int i = 0; i < 100000000; i++) {
+    for (int i = 0; i < 10000000; i++) {
       _count++;
     }
     print('2.计算完成count=$_count');
   });
   print('3.结束count=$_count');
-  print('4.做其他事情');
 }
 
-/// Future.delayed
-void futureDelayTest() {
-  print('开始执行: ${DateTime.now()}');
+/// 1.3 Future.delayed
+void futureTest3() {
+  print('1.开始执行: ${DateTime.now()}');
   Future.delayed(const Duration(seconds: 2), () {
-    print('延时2秒执行: ${DateTime.now()}');
+    print('2.延时2秒执行: ${DateTime.now()}');
   });
+  print('3.结束执行: ${DateTime.now()}');
 }
 
-/// Future.then
-void futureThenTest() {
-  Future(() => print('A')).then((value) => print('A结束'));
-  Future(() => print('B')).then((value) => print('B结束'));
+/// 1.4 Future.then
+void futureTest4() {
+  int _count = 0;
+  print('1.开始count=$_count');
+  Future(() {
+    for (int i = 0; i < 10000000; i++) {
+      _count++;
+    }
+    print('2.计算完成count=$_count');
+  }).then((value) => print('3.结束count=$_count'));
 }
 
-/// Future.catchError
-void futureCatchErrorTest() {
+/// 2.1.1 Future.catchError
+void futureTest5() {
+  int _count = 0;
   print('1.开始count=$_count');
   Future(() {
     _count++;
@@ -93,7 +95,22 @@ void futureCatchErrorTest() {
       .then((value) => print('5.计算完成count=$_count'));
 }
 
-void futureOnErrorTest() {
+/// 2.1.2 onError
+void futureTest6() {
+  int _count = 0;
+  print('1.开始count=$_count');
+  Future(() {
+    _count++;
+    throw Exception('计算错误1');
+  }).then((value) {
+    print('2.计算完成count=$_count');
+  }, onError: (error) {
+    print('3.捕获异常 : $error');
+  });
+}
+
+void futureTest7() {
+  int _count = 0;
   print('1.开始count=$_count');
   Future(() {
     _count++;
