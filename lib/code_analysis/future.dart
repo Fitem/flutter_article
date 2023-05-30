@@ -3,49 +3,58 @@ import 'dart:async';
 ///  Name:
 ///  Created by Fitem on 2023/3/6
 void main() {
-  /// 1.1 Future的基本用法
-  // futureTest1();
+  /// 1.1 Future(FutureOr<T> computation())
+  // futureTest();
 
   /// 1.2 Future.value
-  futureValueTest();
+  // futureValueTest();
 
-  // 1.2 Future.then
-  // futureTest2();
+  /// 1.3 Future.then
+  // futureThenTest();
 
-  // 1.3 延时执行
-  // futureTest3();
+  /// 1.4 Future.delayed
+  // futureDelayedTest();
 
-  // 1.4 await-async
-  // futureTest4();
+  /// 1.5 await-async
+  // awaitAsyncTest();
 
-  // 2.1.1 Future.catchError
-  // futureTest5();
+  /// 2.1.1 catchError
+  // catchErrorTest();
 
-  // 2.1.2 onError
-  // futureTest6();
+  /// 2.1.2 Future.onError
+  // onErrorTest();
 
-  // 2.1.3  catchError 与 onError
-  // futureTest7();
-  // 2.1.3  catchError 与 onError
-  // futureTest8();
-  // 2.1.3  catchError 与 onError
-  // futureTest9();
+  /// 2.1.3  catchError 与 onError
+  // futureErrorTest1();
+  /// 2.1.3  catchError 与 onError
+  // futureErrorTest2();
+  /// 2.1.3  catchError 与 onError
+  // futureErrorTest3();
 
-  // 2.2 whenComplete
-  // futureTest10();
+  /// 2.1.4 Future.error
+  // futureErrorTest();
 
-  // 2.3 wait
-  // futureTest11();
+  /// 2.2 Future.whenComplete
+  // whenCompleteTest();
 
-  // 2.4 timeout
-  // futureTest12();
+  /// 2.3 Future.wait
+  // futureWaitTest();
+
+  /// 2.4 Future.timeout
+  // featureTimeoutTest();
+
+  /// 2.5 Future.doWhile
+  // doWhileTest();
+
+  /// 2.6 Future.Sync
+  // syncTest();
 
   // 3.2 event loop
-  // futureTest13();
+  futureEventLoopTest();
 }
 
 /// 1.1 Future(FutureOr<T> computation())
-void futureTest1() {
+void futureTest() {
   int _count = 0;
   print('1.开始count=$_count');
   Future(() {
@@ -64,8 +73,8 @@ void futureValueTest() {
   });
 }
 
-/// 1.2 Future.then
-void futureTest2() {
+/// 1.3 Future.then
+void futureThenTest() {
   int _count = 0;
   print('1.开始count=$_count');
   Future(() {
@@ -76,8 +85,8 @@ void futureTest2() {
   }).then((value) => print('3.结束count=$_count'));
 }
 
-/// 1.3 Future.delayed
-void futureTest3() {
+/// 1.4 Future.delayed
+void futureDelayedTest() {
   print('1.开始执行: ${DateTime.now()}');
   Future.delayed(const Duration(seconds: 2), () {
     print('2.延时2秒执行: ${DateTime.now()}');
@@ -85,8 +94,8 @@ void futureTest3() {
   print('3.结束执行: ${DateTime.now()}');
 }
 
-/// 1.4 async 和 await
-Future<void> futureTest4() async {
+/// 1.5 async 和 await
+Future<void> awaitAsyncTest() async {
   int _count = 0;
   print('1.开始count=$_count');
   await Future(() {
@@ -99,7 +108,7 @@ Future<void> futureTest4() async {
 }
 
 /// 2.1.1 Future.catchError
-void futureTest5() {
+void catchErrorTest() {
   int _count = 0;
   print('1.开始count=$_count');
   Future(() {
@@ -113,7 +122,7 @@ void futureTest5() {
 }
 
 /// 2.1.2 onError
-void futureTest6() {
+void onErrorTest() {
   int _count = 0;
   print('1.开始count=$_count');
   Future(() {
@@ -127,7 +136,7 @@ void futureTest6() {
 }
 
 /// 2.1.3 catchError 与 onError
-void futureTest7() {
+void futureErrorTest1() {
   int _count = 0;
   print('1.开始count=$_count');
   Future(() {
@@ -143,7 +152,7 @@ void futureTest7() {
 }
 
 /// 2.1.3 catchError 与 onError
-Future<void> futureTest8() async {
+Future<void> futureErrorTest2() async {
   int _count = 0;
   print('1.开始count=$_count');
   Future(() {
@@ -159,7 +168,7 @@ Future<void> futureTest8() async {
 }
 
 /// 2.1.3 catchError 与 onError
-Future<void> futureTest9() async {
+Future<void> futureErrorTest3() async {
   int _count = 0;
   print('1.开始count=$_count');
   Future(() {
@@ -170,8 +179,20 @@ Future<void> futureTest9() async {
   });
 }
 
+/// 2.1.4 Future.error
+futureErrorTest() {
+  int _count = 0;
+  print('1.开始count=$_count');
+  Future(() {
+    _count++;
+    return Future.error(Exception('计算错误1'));
+  }).catchError((error) {
+    print('2.捕获异常 : $error');
+  });
+}
+
 /// 2.2 Future.whenComplete
-void futureTest10() {
+void whenCompleteTest() {
   Future(() {
     throw Exception('计算错误1');
   }).then((value) {}).catchError((error) {
@@ -182,8 +203,8 @@ void futureTest10() {
   });
 }
 
-/// 2.3 wait
-void futureTest11() {
+/// 2.3 Future.wait
+void futureWaitTest() {
   Future.wait([
     Future(() => print('任务1')),
     Future(() => print('任务2')),
@@ -191,8 +212,8 @@ void futureTest11() {
   ]).then((value) => print('完成所有任务'));
 }
 
-/// 2.4 timeout
-void futureTest12() {
+/// 2.4 Future.timeout
+void featureTimeoutTest() {
   Future(() {
     return Future.delayed(const Duration(seconds: 3), () => print('1.完成任务'));
   }).timeout(const Duration(seconds: 2), onTimeout: () {
@@ -202,8 +223,37 @@ void futureTest12() {
   });
 }
 
+/// 2.5 Future.doWhile
+void doWhileTest() {
+  int _count = 0;
+  Future.doWhile(() async {
+    _count++;
+    await Future.delayed(const Duration(seconds: 1));
+    if (_count == 3) {
+      print('Finished with $_count');
+      return false;
+    }
+    return true;
+  });
+}
+
+/// 2.8 Future.sync
+Future<void> syncTest() async {
+  Future future1 =  Future.value(1); // tag1
+  Future future2 = Future<int>(() => 2);	// tag5
+  Future future3 = Future.value(Future(() => 3)); // tag6
+  Future future4 = Future.sync(() => 4);	// tag4
+  Future future5 = Future.sync(() => Future.value(5)); // tag2
+  scheduleMicrotask(() => print(6));  // tag3
+  future1.then(print);
+  future2.then(print);
+  future3.then(print);
+  future4.then(print);
+  future5.then(print);
+}
+
 /// 3.2 event loop
-void futureTest13() {
+void futureEventLoopTest() {
   Future future1 = Future(() {
     // 3. 执行任务1
     print('任务1');
